@@ -5,7 +5,7 @@
 # File Created: Wednesday, 12th July 2023 10:14:53 am
 # Author: Josh.5 (jsunnex@gmail.com)
 # -----
-# Last Modified: Wednesday, 12th July 2023 4:15:01 pm
+# Last Modified: Wednesday, 12th July 2023 4:52:33 pm
 # Modified By: Josh.5 (jsunnex@gmail.com)
 ###
 #
@@ -40,6 +40,28 @@ function fetch_data {
     flexi_downloader "https://github.com/Josh5/aws-audit-logging/archive/refs/heads/master.tar.gz" "./master.tar.gz"
     tar -xvf master.tar.gz --strip-components=1
     popd &>/dev/null || { echo "ERROR! Failed to change back to the previous directory." >&2; exit 1; }
+    echo "DONE"
+    echo
+}
+
+#  ____       _                    _             _ _ _      _ 
+# / ___|  ___| |_ _   _ _ __      / \  _   _  __| (_) |_ __| |
+# \___ \ / _ \ __| | | | '_ \    / _ \| | | |/ _` | | __/ _` |
+#  ___) |  __/ |_| |_| | |_) |  / ___ \ |_| | (_| | | || (_| |
+# |____/ \___|\__|\__,_| .__/  /_/   \_\__,_|\__,_|_|\__\__,_|
+#                      |_|                                    
+#
+function setup_auditd {
+    # Configure Auditd
+    echo "**** Configuring Auditd ****"
+    cp -rfv "${_script_path}/etc/audit/"* /etc/audit/
+    echo "DONE"
+    echo
+
+    # -- Set Auditd to run on startup
+    echo "**** Starting Auditd service ****"
+    systemctl enable auditd
+    systemctl restart auditd
     echo "DONE"
     echo
 }
@@ -144,7 +166,8 @@ elif [[ $(id -u) -gt 0 ]]; then
 fi
 
 # Run
-# TODO: Configure Auditd
+# Configure Auditd
+setup_auditd
 # Install and confiure Fluent Bit
 setup_fluent_bit
 
